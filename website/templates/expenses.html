@@ -1,0 +1,32 @@
+{% extends "action.html" %} 
+{% block title %}Expenses{% endblock %} 
+{% block h3 %}The list of Expenses{% endblock %}
+{% block list %} 
+{% for expense in user.expenses|sort(reverse=true, attribute='date') %}
+<li class="list-group-item">
+  {{ expense.value }}
+  {{ "spent for "}} 
+  {% for etag in user.etags %} 
+  {% if etag.id == expense.tag_id %} 
+  {{ etag.data }} 
+  {% endif %} 
+  {% endfor %} 
+  {{ " on " }} 
+  {{ expense.date }}
+  <button type="button" class="close" onClick="deleteExpense({{ expense.id }})">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</li>
+{% endfor %} 
+{% endblock %} 
+{% block tag %}
+<div class="form-group col">
+  <label for="tag">Tag <a href="/etags">Edit</a></label>
+  <select name="tag" class="form-control">
+    {% for etag in user.etags %}
+    <option>{{etag.data}}</option>
+    {% endfor %} 
+  </select>
+</div>
+{% endblock %}
+{% block button %}Expense{% endblock %}

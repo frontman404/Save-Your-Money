@@ -1,0 +1,16 @@
+{% extends "action.html" %} 
+{% block title %}Savings{% endblock %} 
+{% block h3 %}Savings{% endblock %}
+{% block list %} 
+{% for saving in user.savings|sort(reverse=true, attribute='date') %}
+<li class="list-group-item">
+  {{ saving.value }}
+  {{ "on" }} 
+  {{ saving.date }}
+  <button type="button" class="close" onClick="deleteSaving({{ saving.id }})">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</li>
+{% endfor %} 
+{% endblock %} 
+{% block button %}Saving{% endblock %}

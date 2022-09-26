@@ -1,0 +1,422 @@
+<script
+  type="text/javascript"
+  src="https://www.gstatic.com/charts/loader.js"
+></script>
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart_1);
+    function drawChart_1() {
+    var data_1 = google.visualization.arrayToDataTable([
+    {% for key, value in data_1.items() %}
+    {% if value is string %}
+    ['{{ key }}', '{{ value }}'],
+    {% else %}
+    ['{{ key }}', {{ value }}],
+    {% endif %}
+    {% endfor %}
+    ]);
+
+    var options_1 = {
+      title: 'Overview from {% if date_11 %} {{ date_11 }} {% else %} the beginning {% endif %}'+
+      ' to {% if date_12 %} {{ date_12 }} {% else %} to now {% endif %}',
+      titleTextStyle:{ bold: false, fontSize:18},
+      width: '100%',
+      height: '100%'
+    };
+
+    var chart_1 = new google.visualization.PieChart(document.getElementById('piechart_1'));
+    chart_1.draw(data_1, options_1);
+  }
+</script>
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart_2);
+    function drawChart_2() {
+    var data_2 = google.visualization.arrayToDataTable([
+    {% for key, value in data_2.items() %}
+    {% if value is string %}
+    ['{{ key }}', '{{ value }}'],
+    {% else %}
+    ['{{ key }}', {{ value }}],
+    {% endif %}
+    {% endfor %}
+    ]);
+
+    var total = google.visualization.data.group(data_2, [{
+        type: 'boolean',
+        column: 0,
+        modifier: function () {return true;}
+    }], [{
+        type: 'number',
+        column: 1,
+        aggregation: google.visualization.data.sum
+    }]);
+
+    //data_2.addRow(['Total: ' + total.getValue(0, 1), 0]);
+
+    var options_2 = {
+      title: 'Expenses from {% if date_21 %} {{ date_21 }} {% else %} the beginning {% endif %}'+
+      ' to {% if date_22 %} {{ date_22 }} {% else %} to now {% endif %}'+
+      '\nThe total value of expenses is {{ data_2_total|int }}',
+      titleTextStyle:{ bold: false, fontSize:18},
+      width: '100%',
+      height: '100%',
+      sliceVisibilityThreshold: .0
+
+    };
+
+    var chart_2 = new google.visualization.PieChart(document.getElementById('piechart_2'));
+    chart_2.draw(data_2, options_2);
+  }
+</script>
+<script type="text/javascript">
+    google.charts.load("current", {packages:["corechart"]});
+    google.charts.setOnLoadCallback(drawChart_3);
+    function drawChart_3() {
+    var data_3 = google.visualization.arrayToDataTable([
+    {% for key, value in data_3.items() %}
+    {% if value is string %}
+    ['{{ key }}', '{{ value }}'],
+    {% else %}
+    ['{{ key }}', {{ value }}],
+    {% endif %}
+    {% endfor %}
+    ]);
+
+    var options_3 = {
+      title: 'You are this close to reaching your goal!',
+      titleTextStyle:{ bold: false,fontSize:18},
+      width: '100%',
+      height: '100%',
+      sliceVisibilityThreshold: .05
+    };
+
+    var chart_3 = new google.visualization.PieChart(document.getElementById('piechart_3'));
+    chart_3.draw(data_3, options_3);
+  }
+</script>
+
+<style>
+  #chart_wrap {
+    position: relative;
+    padding-bottom: 100%;
+    height: 0;
+    overflow: hidden;
+  }
+
+  #piechart_1,
+  #piechart_2,
+  #piechart_3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<br />
+<h4 class="font-weight-bold" align="center">Dashboard</h4>
+<form id="form" method="POST">
+  <div class="tab-wrap">
+    <input
+      type="radio"
+      id="tab1"
+      name="tabGroup1"
+      class="tab"
+      {%
+      if
+      tab_1
+      %}
+      checked
+      {%
+      endif
+      %}
+    />
+    <label for="tab1">Overview</label>
+
+    <input
+      type="radio"
+      id="tab2"
+      name="tabGroup1"
+      class="tab"
+      {%
+      if
+      tab_2
+      %}
+      checked
+      {%
+      endif
+      %}
+    />
+    <label for="tab2">Expenses Analysis</label>
+
+    <input
+      type="radio"
+      id="tab3"
+      name="tabGroup1"
+      class="tab"
+      {%
+      if
+      tab_3
+      %}
+      checked
+      {%
+      endif
+      %}
+    />
+    <label for="tab3">Savings Progress</label>
+
+    <div class="tab__content">
+      <div class="row align-items-center justify-content-start">
+        <div class="col">
+          <div id="chart_wrap">
+            <div class="font-weight-normal" id="piechart_1"></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5 align="center">Filter Data</h5>
+          <br />
+          <label for="date_11">Starting Date</label>
+          <input
+            type="date"
+            name="date_11"
+            autocomplete="on"
+            {%
+            if
+            date_11
+            %}
+            value="{{ date_11 }}"
+            {%
+            else
+            %}
+            id="10th_1"
+            {%
+            endif
+            %}
+            class="form-control"
+          />
+          <script>
+            date = new Date();
+            if (date.getDate() >= 10) {
+              date.setDate(10);
+              document.getElementById("10th_1").value = date
+                .toISOString()
+                .substring(0, 10);
+            } else {
+              date.setMonth(date.getMonth() - 1);
+              date.setDate(10);
+              document.getElementById("10th_1").value = date
+                .toISOString()
+                .substring(0, 10);
+            }
+          </script>
+          <br />
+          <label for="date_12">Ending Date</label>
+          <input
+            type="date"
+            name="date_12"
+            {%
+            if
+            date_12
+            %}
+            value="{{ date_12 }}"
+            {%
+            else
+            %}
+            id="today_1"
+            {%
+            endif
+            %}
+            autocomplete="on"
+            class="form-control"
+          />
+          <script>
+            document.getElementById("today_1").value = new Date()
+              .toISOString()
+              .substring(0, 10);
+          </script>
+          <br />
+          <div align="center">
+            <button
+              type="submit"
+              value="1"
+              name="submit_button"
+              class="btn btn-primary"
+            >
+              Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab__content">
+      <div class="row align-items-center justify-content-start">
+        <div class="col">
+          <div id="chart_wrap">
+            <div class="font-weight-normal" id="piechart_2"></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5 align="center">Filter Data</h5>
+          <br />
+          <label for="date_21">Starting Date</label>
+          <input
+            type="date"
+            name="date_21"
+            autocomplete="on"
+            {%
+            if
+            date_21
+            %}
+            value="{{ date_21 }}"
+            {%
+            else
+            %}
+            id="10th_2"
+            {%
+            endif
+            %}
+            class="form-control"
+          />
+          <script>
+            date = new Date();
+            if (date.getDate() >= 10) {
+              date.setDate(10);
+              document.getElementById("10th_2").value = date
+                .toISOString()
+                .substring(0, 10);
+            } else {
+              date.setMonth(date.getMonth() - 1);
+              date.setDate(10);
+              document.getElementById("10th_2").value = date
+                .toISOString()
+                .substring(0, 10);
+            }
+          </script>
+          <br />
+          <label for="date_22">Ending Date</label>
+          <input
+            type="date"
+            name="date_22"
+            {%
+            if
+            date_22
+            %}
+            value="{{ date_22 }}"
+            {%
+            else
+            %}
+            id="today_2"
+            {%
+            endif
+            %}
+            autocomplete="on"
+            class="form-control"
+          />
+          <script>
+            document.getElementById("today_2").value = new Date()
+              .toISOString()
+              .substring(0, 10);
+          </script>
+          <br />
+          <div align="center">
+            <button
+              type="submit"
+              value="2"
+              name="submit_button"
+              class="btn btn-primary"
+            >
+              Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab__content">
+      <div class="row align-items-center justify-content-start">
+        <div class="col">
+          <div id="chart_wrap">
+            <div class="font-weight-normal" id="piechart_3"></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5 align="center">Savings Goal</h5>
+          <br />
+          <input
+            type="text"
+            name="goal"
+            class="form-control"
+            autocomplete="on"
+            placeholder="Enter goal"
+            {%
+            if
+            user.savings_goal
+            %}
+            value="{{ user.savings_goal }}"
+            {%
+            endif
+            %}
+          />
+          <br />
+          <div align="center">
+            <button
+              type="submit"
+              value="3"
+              name="submit_button"
+              class="btn btn-primary"
+            >
+              Change
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-wrap">
+    <input type="radio" id="tab" name="tabGroup2" class="tab" checked />
+    <label for="tab">Notes</label>
+    <div class="tab__content">
+      <div class="row">
+        <div
+          class="container-fluid"
+          style="overflow: scroll; max-height: 200px"
+        >
+          <ul class="list-group">
+            {% for note in user.notes|sort(reverse=true, attribute='date') %}
+            <li class="list-group-item">
+              {{ note.data }}
+              <button
+                type="button"
+                class="close"
+                onClick="deleteNote({{ note.id }})"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="container-fluid">
+          <textarea
+            name="note"
+            class="form-control"
+            placeholder="Enter note"
+          ></textarea>
+        </div>
+      </div>
+      <br />
+      <div class="row justify-content-center">
+        <button type="submit" class="btn btn-primary">Add Note</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

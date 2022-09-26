@@ -1,0 +1,13 @@
+{% extends "tag.html" %} 
+{% block title %}Tags for Expenses{% endblock %} 
+{% block h3 %}The list of Tags for Expenses{% endblock %} 
+{% block list %}
+  {% for etag in user.etags %}
+  <li class="list-group-item">
+    {{ etag.data }}
+    <button type="button" class="close" onClick="deleteEtag({{ etag.id }})">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </li>
+  {% endfor %}
+  {% endblock %}

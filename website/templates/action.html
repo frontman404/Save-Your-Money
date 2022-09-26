@@ -1,0 +1,44 @@
+{% extends "base.html" %}  
+{% block content %}
+<br />
+<h4 class="font-weight-bold" align="center">{% block h3 %}{% endblock %}</h4>
+<div class="container-fluid" style="overflow: scroll; max-height: 330px;">
+<ul class="list-group"></ul>
+{% block list %}{% endblock %}
+</ul>
+<br />
+</div>
+<br />
+<form method="POST">
+    <div class="form-row">
+      <div class="form-group col">
+        <label for="value">Value</label>
+        <input
+          type="text"
+          name="value"
+          class="form-control"
+          placeholder="Enter value"
+        />
+      </div>
+      {% block tag %}{% endblock %}
+      <div class="form-group col">
+        <label for="date">Date</label>
+        <input
+          type="date"
+          name="date"
+          id="e"
+          min="2016-11-22"
+          max="2116-11-22"
+          class="form-control"
+        />
+        <script>
+            document.getElementById('e').value = new Date().toISOString().substring(0, 10);
+        </script>
+      </div>
+    </div>
+    <br />
+    <div align="center">
+      <button type="submit" class="btn btn-primary">Add {% block button %}{% endblock %}</button>
+    </div>
+  </form>
+  {% endblock %}

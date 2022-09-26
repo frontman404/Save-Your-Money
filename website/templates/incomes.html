@@ -1,0 +1,32 @@
+{% extends "action.html" %} 
+{% block title %}Incomes{% endblock %} 
+{% block h3 %}The list of Incomes{% endblock %}
+{% block list %} 
+{% for income in user.incomes|sort(reverse=true, attribute='date') %}
+<li class="list-group-item">
+  {{ income.value }}
+  {{ "recieved as "}} 
+  {% for itag in user.itags %} 
+  {% if itag.id == income.tag_id %} 
+  {{ itag.data }} 
+  {% endif %} 
+  {% endfor %} 
+  {{ " on " }} 
+  {{ income.date }}
+  <button type="button" class="close" onClick="deleteIncome({{ income.id }})">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</li>
+{% endfor %} 
+{% endblock %} 
+{% block tag %}
+<div class="form-group col">
+  <label for="tag">Tag <a href="/itags">Edit</a></label>
+  <select name="tag" class="form-control">
+    {% for itag in user.itags %}
+    <option>{{itag.data}}</option>
+    {% endfor %} 
+  </select>
+</div>
+{% endblock %}
+{% block button %}Income{% endblock %}
