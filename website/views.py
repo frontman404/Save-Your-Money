@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 def calculate_overview(date_11_raw, date_12_raw):
-    data_1 = {"Portion": "Lei"}
+    data_1 = dict()
     if not date_11_raw or not date_12_raw:
         sum_expenses = 0
         for expense in current_user.expenses:
@@ -23,7 +23,8 @@ def calculate_overview(date_11_raw, date_12_raw):
             data_1["Over the budget"] = -diff
         else:
             data_1["Expenses"] = sum_expenses
-            data_1["Savings"] = sum_savings
+            if sum_savings > 0:
+                data_1["Savings"] = sum_savings
             data_1["Leftovers"] = diff
     else:
         try:
@@ -52,7 +53,12 @@ def calculate_overview(date_11_raw, date_12_raw):
         else:
             data_1["Leftovers"] = diff
             data_1["Expenses"] = sum_expenses
-            data_1["Savings"] = sum_savings
+            if sum_savings > 0:
+                data_1["Savings"] = sum_savings
+    data_1_sorted = sorted(data_1.items(), key=lambda x: x[1], reverse=True)
+    data_1 = {"Expense": "Lei"}
+    for i in data_1_sorted:
+        data_1[i[0]] = i[1]
     return data_1
 
 
