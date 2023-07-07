@@ -3,37 +3,52 @@
   src="https://www.gstatic.com/charts/loader.js"
 ></script>
 <script type="text/javascript">
-    google.charts.load("current", {packages:["corechart"]});
-    google.charts.setOnLoadCallback(drawChart_1);
-    function drawChart_1() {
-    var data_1 = google.visualization.arrayToDataTable([
-    {% for key, value in data_1.items() %}
-    {% if value is string %}
-    ['{{ key }}', '{{ value }}'],
-    {% else %}
-    ['{{ key }}', {{ value }}],
-    {% endif %}
-    {% endfor %}
-    ]);
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart_expenses);
+  function drawChart_expenses() {
+  var expenses_data = google.visualization.arrayToDataTable([
+  {% for key, value in expenses_data.items() %}
+  {% if value is string %}
+  ['{{ key }}', '{{ value }}'],
+  {% else %}
+  ['{{ key }}', {{ value }}],
+  {% endif %}
+  {% endfor %}
+  ]);
 
-    var options_1 = {
-      title: 'Overview from {% if date_11 %} {{ date_11 }} {% else %} the beginning {% endif %}'+
-      ' to {% if date_12 %} {{ date_12 }} {% else %} to now {% endif %}',
-      titleTextStyle:{ bold: false, fontSize:18},
-      width: '100%',
-      height: '100%'
-    };
+  var total = google.visualization.data.group(expenses_data, [{
+      type: 'boolean',
+      column: 0,
+      modifier: function () {return true;}
+  }], [{
+      type: 'number',
+      column: 1,
+      aggregation: google.visualization.data.sum
+  }]);
 
-    var chart_1 = new google.visualization.PieChart(document.getElementById('piechart_1'));
-    chart_1.draw(data_1, options_1);
-  }
+  //data_2.addRow(['Total: ' + total.getValue(0, 1), 0]);
+
+  var options_expenses = {
+    title: 'Expenses from {% if start_date %} {{ start_date }} {% else %} the beginning {% endif %}'+
+    ' to {% if end_date %} {{ end_date }} {% else %} now{% endif %}.'+
+    '\nThe total value of expenses is {{ expenses_data_total|int }}.',
+    titleTextStyle:{ bold: false, fontSize:18},
+    width: '100%',
+    height: '100%',
+    sliceVisibilityThreshold: .0
+
+  };
+
+  var chart_expenses = new google.visualization.PieChart(document.getElementById('piechart_expenses'));
+  chart_expenses.draw(expenses_data, options_expenses);
+}
 </script>
 <script type="text/javascript">
     google.charts.load("current", {packages:["corechart"]});
-    google.charts.setOnLoadCallback(drawChart_2);
-    function drawChart_2() {
-    var data_2 = google.visualization.arrayToDataTable([
-    {% for key, value in data_2.items() %}
+    google.charts.setOnLoadCallback(drawChart_incomes);
+    function drawChart_incomes() {
+    var incomes_data = google.visualization.arrayToDataTable([
+    {% for key, value in incomes_data.items() %}
     {% if value is string %}
     ['{{ key }}', '{{ value }}'],
     {% else %}
@@ -42,7 +57,7 @@
     {% endfor %}
     ]);
 
-    var total = google.visualization.data.group(data_2, [{
+    var total = google.visualization.data.group(incomes_data, [{
         type: 'boolean',
         column: 0,
         modifier: function () {return true;}
@@ -54,10 +69,10 @@
 
     //data_2.addRow(['Total: ' + total.getValue(0, 1), 0]);
 
-    var options_2 = {
-      title: 'Expenses from {% if date_21 %} {{ date_21 }} {% else %} the beginning {% endif %}'+
-      ' to {% if date_22 %} {{ date_22 }} {% else %} to now {% endif %}'+
-      '\nThe total value of expenses is {{ data_2_total|int }}',
+    var options_incomes = {
+      title: 'Incomes from {% if start_date %} {{ start_date }} {% else %} the beginning {% endif %}'+
+      ' to {% if end_date %} {{ end_date }} {% else %} now{% endif %}.'+
+      '\nThe total value of expenses is {{ incomes_data_total|int }}.',
       titleTextStyle:{ bold: false, fontSize:18},
       width: '100%',
       height: '100%',
@@ -65,16 +80,16 @@
 
     };
 
-    var chart_2 = new google.visualization.PieChart(document.getElementById('piechart_2'));
-    chart_2.draw(data_2, options_2);
+    var chart_incomes = new google.visualization.PieChart(document.getElementById('piechart_incomes'));
+    chart_incomes.draw(incomes_data, options_incomes);
   }
 </script>
 <script type="text/javascript">
     google.charts.load("current", {packages:["corechart"]});
-    google.charts.setOnLoadCallback(drawChart_3);
-    function drawChart_3() {
-    var data_3 = google.visualization.arrayToDataTable([
-    {% for key, value in data_3.items() %}
+    google.charts.setOnLoadCallback(drawChart_savings);
+    function drawChart_savings() {
+    var savings_data = google.visualization.arrayToDataTable([
+    {% for key, value in savings_data.items() %}
     {% if value is string %}
     ['{{ key }}', '{{ value }}'],
     {% else %}
@@ -83,7 +98,7 @@
     {% endfor %}
     ]);
 
-    var options_3 = {
+    var options_savings = {
       title: 'You are this close to reaching your goal!',
       titleTextStyle:{ bold: false,fontSize:18},
       width: '100%',
@@ -91,8 +106,8 @@
       sliceVisibilityThreshold: .05
     };
 
-    var chart_3 = new google.visualization.PieChart(document.getElementById('piechart_3'));
-    chart_3.draw(data_3, options_3);
+    var chart_savings = new google.visualization.PieChart(document.getElementById('piechart_savings'));
+    chart_savings.draw(savings_data, options_savings);
   }
 </script>
 
@@ -104,9 +119,9 @@
     overflow: hidden;
   }
 
-  #piechart_1,
-  #piechart_2,
-  #piechart_3 {
+  #piechart_expenses,
+  #piechart_incomes,
+  #piechart_savings {
     position: absolute;
     top: 0;
     left: 0;
@@ -118,7 +133,7 @@
 {% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
 content %}
 <br />
-<h4 class="font-weight-bold" align="center">Dashboard</h4>
+<h4 class="font-weight-bold" align="center">Welcome back, {{ current_user.first_name }}</h4>
 <form id="form" method="POST">
   <div class="tab-wrap">
     <input
@@ -128,14 +143,14 @@ content %}
       class="tab"
       {%
       if
-      tab_1
+      tabs[0]
       %}
       checked
       {%
       endif
       %}
     />
-    <label for="tab1">Overview</label>
+    <label for="tab1">Expenses Analysis</label>
 
     <input
       type="radio"
@@ -144,14 +159,14 @@ content %}
       class="tab"
       {%
       if
-      tab_2
+      tabs[1]
       %}
       checked
       {%
       endif
       %}
     />
-    <label for="tab2">Expenses Analysis</label>
+    <label for="tab2">Incomes Analysis</label>
 
     <input
       type="radio"
@@ -160,7 +175,7 @@ content %}
       class="tab"
       {%
       if
-      tab_3
+      tabs[2]
       %}
       checked
       {%
@@ -173,26 +188,26 @@ content %}
       <div class="row align-items-center justify-content-start">
         <div class="col">
           <div id="chart_wrap">
-            <div class="font-weight-normal" id="piechart_1"></div>
+            <div class="font-weight-normal" id="piechart_expenses"></div>
           </div>
         </div>
         <div class="col-md-4">
           <h5 align="center">Filter Data</h5>
           <br />
-          <label for="date_11">Starting Date</label>
+          <label for="start_date_expenses">Starting Date</label>
           <input
             type="date"
-            name="date_11"
+            name="start_date_expenses"
             autocomplete="on"
             {%
             if
-            date_11
+            start_date
             %}
-            value="{{ date_11 }}"
+            value="{{ start_date }}"
             {%
             else
             %}
-            id="10th_1"
+            id="1st"
             {%
             endif
             %}
@@ -200,33 +215,25 @@ content %}
           />
           <script>
             date = new Date();
-            if (date.getDate() >= 10) {
-              date.setDate(10);
-              document.getElementById("10th_1").value = date
-                .toISOString()
-                .substring(0, 10);
-            } else {
-              date.setMonth(date.getMonth() - 1);
-              date.setDate(10);
-              document.getElementById("10th_1").value = date
-                .toISOString()
-                .substring(0, 10);
-            }
+            date.setDate(1);
+            document.getElementById("1st").value = date
+              .toISOString()
+              .substring(0, 10);
           </script>
           <br />
-          <label for="date_12">Ending Date</label>
+          <label for="end_date_expenses">Ending Date</label>
           <input
             type="date"
-            name="date_12"
+            name="end_date_expenses"
             {%
             if
-            date_12
+            end_date
             %}
-            value="{{ date_12 }}"
+            value="{{ end_date }}"
             {%
             else
             %}
-            id="today_1"
+            id="today"
             {%
             endif
             %}
@@ -234,7 +241,7 @@ content %}
             class="form-control"
           />
           <script>
-            document.getElementById("today_1").value = new Date()
+            document.getElementById("today").value = new Date()
               .toISOString()
               .substring(0, 10);
           </script>
@@ -243,7 +250,7 @@ content %}
             <button
               type="submit"
               value="1"
-              name="submit_button"
+              name="filter_button"
               class="btn btn-primary"
             >
               Filter
@@ -257,26 +264,26 @@ content %}
       <div class="row align-items-center justify-content-start">
         <div class="col">
           <div id="chart_wrap">
-            <div class="font-weight-normal" id="piechart_2"></div>
+            <div class="font-weight-normal" id="piechart_incomes"></div>
           </div>
         </div>
         <div class="col-md-4">
           <h5 align="center">Filter Data</h5>
           <br />
-          <label for="date_21">Starting Date</label>
+          <label for="start_date_incomes">Starting Date</label>
           <input
             type="date"
-            name="date_21"
+            name="start_date_incomes"
             autocomplete="on"
             {%
             if
-            date_21
+            start_date
             %}
-            value="{{ date_21 }}"
+            value="{{ start_date }}"
             {%
             else
             %}
-            id="10th_2"
+            id="1st1"
             {%
             endif
             %}
@@ -284,33 +291,25 @@ content %}
           />
           <script>
             date = new Date();
-            if (date.getDate() >= 10) {
-              date.setDate(10);
-              document.getElementById("10th_2").value = date
-                .toISOString()
-                .substring(0, 10);
-            } else {
-              date.setMonth(date.getMonth() - 1);
-              date.setDate(10);
-              document.getElementById("10th_2").value = date
-                .toISOString()
-                .substring(0, 10);
-            }
+            date.setDate(1);
+            document.getElementById("1st1").value = date
+              .toISOString()
+              .substring(0, 10);
           </script>
           <br />
-          <label for="date_22">Ending Date</label>
+          <label for="end_date_incomes">Ending Date</label>
           <input
             type="date"
-            name="date_22"
+            name="end_date_incomes"
             {%
             if
-            date_22
+            end_date
             %}
-            value="{{ date_22 }}"
+            value="{{ end_date }}"
             {%
             else
             %}
-            id="today_2"
+            id="today1"
             {%
             endif
             %}
@@ -318,7 +317,7 @@ content %}
             class="form-control"
           />
           <script>
-            document.getElementById("today_2").value = new Date()
+            document.getElementById("today1").value = new Date()
               .toISOString()
               .substring(0, 10);
           </script>
@@ -327,7 +326,7 @@ content %}
             <button
               type="submit"
               value="2"
-              name="submit_button"
+              name="filter_button"
               class="btn btn-primary"
             >
               Filter
@@ -341,7 +340,7 @@ content %}
       <div class="row align-items-center justify-content-start">
         <div class="col">
           <div id="chart_wrap">
-            <div class="font-weight-normal" id="piechart_3"></div>
+            <div class="font-weight-normal" id="piechart_savings"></div>
           </div>
         </div>
         <div class="col-md-4">
@@ -367,7 +366,7 @@ content %}
             <button
               type="submit"
               value="3"
-              name="submit_button"
+              name="filter_button"
               class="btn btn-primary"
             >
               Change
@@ -381,10 +380,10 @@ content %}
     <input type="radio" id="tab" name="tabGroup2" class="tab" checked />
     <label for="tab">Notes</label>
     <div class="tab__content">
-      <div class="row">
+      <div class="row" style="word-wrap: break-word">
         <div
           class="container-fluid"
-          style="overflow: scroll; max-height: 200px"
+          style="overflow: auto; max-height: 200px"
         >
           <ul class="list-group">
             {% for note in user.notes|sort(reverse=true, attribute='date') %}

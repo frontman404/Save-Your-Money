@@ -6,112 +6,92 @@ import json
 from datetime import datetime
 
 
-def calculate_overview(date_11_raw, date_12_raw):
-    data_1 = dict()
-    if not date_11_raw or not date_12_raw:
-        sum_expenses = 0
-        for expense in current_user.expenses:
-            sum_expenses += expense.value
-        sum_savings = 0
-        for saving in current_user.savings:
-            sum_savings += saving.value
-        sum_incomes = 0
-        for income in current_user.incomes:
-            sum_incomes += income.value
-        diff = sum_incomes - sum_expenses - sum_savings
-        if diff < 0:
-            data_1["Over the budget"] = -diff
-        else:
-            data_1["Expenses"] = sum_expenses
-            if sum_savings > 0:
-                data_1["Savings"] = sum_savings
-            data_1["Leftovers"] = diff
-    else:
-        try:
-            date_11 = datetime.strptime(date_11_raw, "%Y-%m-%d")
-            date_12 = datetime.strptime(date_12_raw, "%Y-%m-%d")
-            date_11 = datetime.date(date_11)
-            date_12 = datetime.date(date_12)
-        except:
-            date_11 = datetime.date(date_11_raw)
-            date_12 = datetime.date(date_12_raw)
-        sum_expenses = 0
-        for expense in current_user.expenses:
-            if expense.date >= date_11 and expense.date <= date_12:
-                sum_expenses += expense.value
-        sum_savings = 0
-        for saving in current_user.savings:
-            if saving.date >= date_11 and saving.date <= date_12:
-                sum_savings += saving.value
-        sum_incomes = 0
-        for income in current_user.incomes:
-            if income.date >= date_11 and income.date <= date_12:
-                sum_incomes += income.value
-        diff = sum_incomes - sum_expenses - sum_savings
-        if diff < 0:
-            data_1["Over the budget"] = -diff
-        else:
-            data_1["Leftovers"] = diff
-            data_1["Expenses"] = sum_expenses
-            if sum_savings > 0:
-                data_1["Savings"] = sum_savings
-    data_1_sorted = sorted(data_1.items(), key=lambda x: x[1], reverse=True)
-    data_1 = {"Expense": "Lei"}
-    for i in data_1_sorted:
-        data_1[i[0]] = i[1]
-    return data_1
-
-
-def calculate_expenses(date_21_raw, date_22_raw):
-    data_2 = dict()
+def calculate_expenses(start_date_raw, end_date_raw):
+    expenses_data = dict()
     total = 0
-    if not date_21_raw or not date_22_raw:
+    if not start_date_raw or not end_date_raw:
         for etag in current_user.etags:
             sum = 0
             for expense in current_user.expenses:
                 if etag.id == expense.tag_id:
                     sum += expense.value
-            data_2[etag.data] = sum
+            expenses_data[etag.data] = sum
             total += sum
     else:
         try:
-            date_21 = datetime.strptime(date_21_raw, "%Y-%m-%d")
-            date_22 = datetime.strptime(date_22_raw, "%Y-%m-%d")
+            start_date = datetime.strptime(start_date_raw, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_raw, "%Y-%m-%d")
         except:
-            date_21 = date_21_raw
-            date_22 = date_22_raw
+            start_date = start_date_raw
+            end_date = end_date_raw
         for etag in current_user.etags:
             sum = 0
             for expense in current_user.expenses:
                 if (
                     etag.id == expense.tag_id
-                    and expense.date <= datetime.date(date_22)
-                    and expense.date >= datetime.date(date_21)
+                    and expense.date <= datetime.date(end_date)
+                    and expense.date >= datetime.date(start_date)
                 ):
                     sum += expense.value
-            data_2[etag.data] = sum
+            expenses_data[etag.data] = sum
             total += sum
-    data_2_sorted = sorted(data_2.items(), key=lambda x: x[1], reverse=True)
-    data_2 = {"Expense": "Lei"}
-    for i in data_2_sorted:
-        data_2[i[0]] = i[1]
-    return [data_2, total]
+    expenses_data_sorted = sorted(expenses_data.items(), key=lambda x: x[1], reverse=True)
+    expenses_data = {"Expenses": "Lei"}
+    for i in expenses_data_sorted:
+        expenses_data[i[0]] = i[1]
+    return [expenses_data, total]
+
+
+def calculate_incomes(start_date_raw, end_date_raw):
+    incomes_data = dict()
+    total = 0
+    if not start_date_raw or not end_date_raw:
+        for itag in current_user.itags:
+            sum = 0
+            for income in current_user.incomes:
+                if itag.id == income.tag_id:
+                    sum += income.value
+            incomes_data[itag.data] = sum
+            total += sum
+    else:
+        try:
+            start_date = datetime.strptime(start_date_raw, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_raw, "%Y-%m-%d")
+        except:
+            start_date = start_date_raw
+            end_date = end_date_raw
+        for itag in current_user.itags:
+            sum = 0
+            for income in current_user.incomes:
+                if (
+                    itag.id == income.tag_id
+                    and income.date <= datetime.date(end_date)
+                    and income.date >= datetime.date(start_date)
+                ):
+                    sum += income.value
+            incomes_data[itag.data] = sum
+            total += sum
+    incomes_data_sorted = sorted(incomes_data.items(), key=lambda x: x[1], reverse=True)
+    incomes_data = {"Incomes": "Lei"}
+    for i in incomes_data_sorted:
+        incomes_data[i[0]] = i[1]
+    return [incomes_data, total]
 
 
 def calculate_savings(goal_string):
-    data_3 = {"Savings progress": "Lei"}
+    savings_data = {"Savings progress": "Lei"}
     if not goal_string:
         if not current_user.savings_goal:
             sum = 0
             for saving in current_user.savings:
                 sum += saving.value
-            data_3["Savings"] = sum
+            savings_data["Savings"] = sum
         else:
             sum = 0
             for saving in current_user.savings:
                 sum += saving.value
-            data_3["Savings"] = sum
-            data_3["Still needing"] = current_user.savings_goal - sum
+            savings_data["Savings"] = sum
+            savings_data["Still needing"] = current_user.savings_goal - sum
     else:
         try:
             goal = float(goal_string)
@@ -121,13 +101,13 @@ def calculate_savings(goal_string):
             sum = 0
             for saving in current_user.savings:
                 sum += saving.value
-            data_3["Savings"] = sum
+            savings_data["Savings"] = sum
             if goal <= sum:
                 goal = sum
-            data_3["Still needing"] = goal - sum
+            savings_data["Still needing"] = goal - sum
         except:
             flash("Please enter a valid number as goal!", category="error")
-    return data_3
+    return savings_data
 
 
 views = Blueprint("views", __name__)
@@ -136,30 +116,31 @@ views = Blueprint("views", __name__)
 @views.route("/", methods=["GET", "POST"])
 @login_required
 def dashboard():
-    tab_1 = True
-    tab_2 = False
-    tab_3 = False
+    tabs = [True, False, False]
 
-    date_11_raw = request.form.get("date_11")
-    date_12_raw = request.form.get("date_12")
-    date_21_raw = request.form.get("date_21")
-    date_22_raw = request.form.get("date_22")
     note = request.form.get("note")
     goal_string = request.form.get("goal")
 
-    print(date_21_raw)
-
     if request.method == "POST":
-        if request.form.get("submit_button") == "1":
+        if request.form.get("filter_button") == "1":
             pass
-        elif request.form.get("submit_button") == "2":
-            tab_2 = True
-        elif request.form.get("submit_button") == "3":
-            tab_3 = True
-
-    data_1 = calculate_overview(date_11_raw, date_12_raw)
-    [data_2, data_2_total] = calculate_expenses(date_21_raw, date_22_raw)
-    data_3 = calculate_savings(goal_string)
+        elif request.form.get("filter_button") == "2":
+            tabs = [False, True, False]
+        elif request.form.get("filter_button") == "3":
+            tabs = [False, False, True]
+    if tabs[0] == True:
+        start_date_raw = request.form.get("start_date_expenses")
+        end_date_raw = request.form.get("end_date_expenses")
+    elif tabs[1] == True:
+        start_date_raw = request.form.get("start_date_incomes")
+        end_date_raw = request.form.get("end_date_incomes")
+    elif tabs[2] == True:
+        start_date_raw = request.form.get("start_date_incomes")
+        end_date_raw = request.form.get("end_date_incomes")
+    
+    [incomes_data, incomes_data_total] = calculate_incomes(start_date_raw, end_date_raw)
+    [expenses_data, expenses_data_total] = calculate_expenses(start_date_raw, end_date_raw)
+    savings_data = calculate_savings(goal_string)
 
     if note:
         new_note = Note(data=note, user_id=current_user.id)
@@ -170,18 +151,15 @@ def dashboard():
     return render_template(
         "dashboard.html",
         user=current_user,
-        data_3=data_3,
-        tab_1=tab_1,
-        tab_2=tab_2,
-        tab_3=tab_3,
-        date_11=date_11_raw,
-        date_12=date_12_raw,
-        date_21=date_21_raw,
-        date_22=date_22_raw,
+        tabs=tabs,
+        start_date=start_date_raw,
+        end_date=end_date_raw,
         goal=goal_string,
-        data_1=data_1,
-        data_2=data_2,
-        data_2_total=data_2_total,
+        expenses_data=expenses_data,
+        incomes_data=incomes_data,
+        expenses_data_total=expenses_data_total,
+        incomes_data_total=incomes_data_total,
+        savings_data=savings_data
     )
 
 

@@ -2,22 +2,27 @@
 {% block content %}
 <br />
 <h4 class="font-weight-bold" align="center">{% block h3 %}{% endblock %}</h4>
-<div class="container-fluid" style="overflow: scroll; max-height: 330px;">
-<ul class="list-group"></ul>
-{% block list %}{% endblock %}
-</ul>
+<div class="container-fluid" style="overflow: auto; max-height: 330px;">
+  <table class="table table-hover table-striped">
+    <thead class="thead-dark">
+    {% block table_head %}{% endblock %}
+    </thead>
+    <tbody>
+      {% block list %}{% endblock %}
+    </tbody>
+  </table>
 <br />
 </div>
 <br />
 <form method="POST">
     <div class="form-row">
       <div class="form-group col">
-        <label for="value">Value</label>
+        <label for="value">Amount</label>
         <input
           type="text"
           name="value"
           class="form-control"
-          placeholder="Enter value"
+          placeholder="Enter amount"
         />
       </div>
       {% block tag %}{% endblock %}
