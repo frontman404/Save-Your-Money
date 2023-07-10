@@ -11,7 +11,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def create_app():
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "your_secret_not_mine"
+    app.config["SECRET_KEY"] = "test"
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
         basedir, DB_NAME
     )
@@ -25,7 +25,8 @@ def create_app():
 
     from .models import User, Expense, Etag, Income, Itag, Saving, Note
 
-    create_database(app)
+    with app.app_context():
+        db.create_all()
 
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
@@ -37,8 +38,3 @@ def create_app():
 
     return app
 
-
-def create_database(app):
-    if not path.exists("website/" + DB_NAME):
-        db.create_all(app=app)
-        print("Created database!")

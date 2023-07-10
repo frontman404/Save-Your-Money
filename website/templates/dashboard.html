@@ -130,7 +130,10 @@
   }
 </style>
 
-{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+
+{% extends "base.html" %} 
+{% set active_page = 'dashboard' %}
+{% block title %}Dashboard{% endblock %} {% block
 content %}
 <br />
 <h4 class="font-weight-bold" align="center">Welcome back, {{ current_user.first_name }}</h4>
