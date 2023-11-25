@@ -24,7 +24,7 @@ class Income(db.Model):
     date = db.Column(db.Date)
     tag_id = db.Column(db.Integer, db.ForeignKey("itag.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    
+
 
 class Itag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,5 +59,3 @@ class User(db.Model, UserMixin):
     itags = db.relationship("Itag")
     savings = db.relationship("Saving")
     notes = db.relationship("Note")
-
-

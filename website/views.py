@@ -35,7 +35,9 @@ def calculate_expenses(start_date_raw, end_date_raw):
                     sum += expense.value
             expenses_data[etag.data] = sum
             total += sum
-    expenses_data_sorted = sorted(expenses_data.items(), key=lambda x: x[1], reverse=True)
+    expenses_data_sorted = sorted(
+        expenses_data.items(), key=lambda x: x[1], reverse=True
+    )
     expenses_data = {"Expenses": "Lei"}
     for i in expenses_data_sorted:
         expenses_data[i[0]] = i[1]
@@ -137,9 +139,11 @@ def dashboard():
     elif tabs[2] == True:
         start_date_raw = request.form.get("start_date_incomes")
         end_date_raw = request.form.get("end_date_incomes")
-    
+
     [incomes_data, incomes_data_total] = calculate_incomes(start_date_raw, end_date_raw)
-    [expenses_data, expenses_data_total] = calculate_expenses(start_date_raw, end_date_raw)
+    [expenses_data, expenses_data_total] = calculate_expenses(
+        start_date_raw, end_date_raw
+    )
     savings_data = calculate_savings(goal_string)
 
     if note:
@@ -159,7 +163,7 @@ def dashboard():
         incomes_data=incomes_data,
         expenses_data_total=expenses_data_total,
         incomes_data_total=incomes_data_total,
-        savings_data=savings_data
+        savings_data=savings_data,
     )
 
 

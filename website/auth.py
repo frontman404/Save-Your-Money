@@ -56,7 +56,7 @@ def sign_up():
             new_user = User(
                 username=username,
                 first_name=firstName,
-                password=generate_password_hash(password1, method="sha256"),
+                password=generate_password_hash(password1),
             )
             db.session.add(new_user)
             db.session.commit()
@@ -88,9 +88,7 @@ def user():
                         flash("First name has been changed!", category="success")
                 if password1 and password2:
                     if password1 == password2:
-                        user.password = generate_password_hash(
-                            password1, method="sha256"
-                        )
+                        user.password = generate_password_hash(password1)
                         flash("Password has been changed!", category="success")
                     else:
                         flash("Passwords don't match!", category="error")
